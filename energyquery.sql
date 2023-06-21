@@ -58,7 +58,7 @@ FROM
 
 -------------------------
 ----------------------------
---GEtting monitoring time in seconds
+--Getting monitoring time in seconds
 WITH interval_data AS (
     SELECT 
         "time_updated",
@@ -68,3 +68,66 @@ WITH interval_data AS (
 SELECT 
     SUM(EXTRACT(EPOCH FROM ("time_updated" - previous_timestamp))) AS total_monitoring_time
 FROM interval_data;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+--Using CTE
+
+SELECT * FROM public."SupplyStatuses"
+
+SELECT * FROM public."SupplyHistories"
+order by "DateUpdated" desc
+--limit 30
+where "StateName" = 'ONDO'
+
+SELECT  COUNT(DISTINCT "StateName"), "StateName"
+FROM "SupplyHistories"
+group by "StateName";
+
+SELECT  COUNT(*), "StateName"
+FROM "SupplyHistories"
+group by "StateName";
+
+WITH cte AS (
+    SELECT "Id",
+  "ClientId", 
+  "SupplyStatusId",
+  "DeviceId",
+  "FeederName",
+  "FeederType",
+  "ServiceBand", 
+	"Status",
+  "VoltageSupplied",
+  "CurrentSupplied",
+  "CommunityId",
+  "CommunityName",
+  "StateName",
+	"StateCode",
+  "LgaName","LgaCode",
+  "HostAddress","HostName",
+  "Longitude","Latitude",
+  "BatteryLevel",
+	"SignalStrength",
+  "SupplyZoneId","DateUpdated",
+  "CurrentSupplied1","CurrentSupplied2",
+	"CurrentSupplied3","VoltageSupplied1",
+  "VoltageSupplied2","VoltageSupplied3",
+  "FromDate","ToDate" 
+	FROM public."SupplyStatuses"
+    --WHERE condition
+),
+updated_cte AS (
+    DELETE FROM cte
+	WHERE Id IN (SELECT Id FROM cte ORDER BY Id LIMIT 2)
+    RETURNING *
+)
+
+CREATE TABLE supplytable AS
+SELECT *
+FROM updated_cte;
+
+alter table supplytable
+alter column ClientId type text,
+alter column SupplyStatusId type text,
+alter column Status type text;
+
+select * from supplytable
