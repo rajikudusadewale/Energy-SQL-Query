@@ -1,2 +1,2 @@
 # Energy-SQL-Query
-SQL
+Just Sequel Statements
