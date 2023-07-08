@@ -70,7 +70,7 @@ SELECT
 FROM interval_data;
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
---Using CTE
+--Using CTE (common table expression)
 
 SELECT * FROM public."SupplyStatuses"
 
